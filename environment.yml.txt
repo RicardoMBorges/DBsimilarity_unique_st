@@ -1,0 +1,12 @@
+name: photo2struct_rdkit
+channels:
+  - conda-forge
+dependencies:
+  - python=3.9
+  - numpy<2.0
+  - rdkit
+  - pandas
+  - streamlit
+  - pip
+  - pip:
+      - py3Dmol
