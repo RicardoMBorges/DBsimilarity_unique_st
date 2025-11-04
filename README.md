@@ -2,7 +2,7 @@ Here’s a complete **`README.md` tutorial** for your project, ready to be used 
 
 ---
 
-# photo2Struct: Chemical Structure Recognition & Similarity Analysis App
+# DBsimilarity_unique: Chemical Structure Recognition & Similarity Analysis App
 
 This Streamlit web application allows you to **extract chemical structure information from images or SMILES**, compute descriptors, compare to a user-uploaded database, and **visualize structural similarity as a network**.
 
@@ -17,7 +17,7 @@ This Streamlit web application allows you to **extract chemical structure inform
 
 ---
 
-## 🧰 Requirements
+## Requirements
 
 Install dependencies (preferably in a virtual environment):
 
@@ -27,7 +27,7 @@ pip install streamlit rdkit-pypi pandas numpy plotly networkx pillow
 
 ---
 
-## ▶️ How to Run
+## How to Run
 
 From the project folder, run the app using:
 
@@ -39,7 +39,7 @@ The app will open in your default browser.
 
 ---
 
-## 📂 Input Files
+## Input Files
 
 ### 1. Structure Input
 
@@ -54,7 +54,7 @@ Upload a `.csv` file containing at least:
 * `SMILES` (required) – structure for similarity comparison
 * Optional: `Descriptive_Method`, `Additional_comments`, or any custom metadata
 
-ℹ️ Other columns will be used for network hover tooltips or method suggestion (you can select them).
+Other columns will be used for network hover tooltips or method suggestion (you can select them).
 
 ---
 
@@ -108,14 +108,15 @@ CCCC,Method B,High retention,Alkanes
 
 ---
 
-## 🧑‍Author
+## Author
 
 Developed by **Ricardo M. Borges**
 Contact: [GitHub](https://github.com/RicardoMBorges) • [LinkedIn](https://www.linkedin.com/in/ricardomborges/) • [UFRJ](http://www.ippn.ufrj.br)
 
 ---
 
-## 📄 License
+## License
 
 MIT License
+
 
