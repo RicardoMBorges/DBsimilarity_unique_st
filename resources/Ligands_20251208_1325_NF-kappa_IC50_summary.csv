@@ -1,0 +1,91 @@
+SMILES;cas.index.name;cas.rn;Parameter;Value
+O=c1c(O)c(-c2ccc(O)c(O)c2)oc2cc(O)cc(O)c12;4H-1-Benzopyran-4-one, 2-(3,4-dihydroxyphenyl)-3,5,7-trihydroxy-;117-39-5;IC50;< 5 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;0.173 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;0.98 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;0.98 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;1 - 10 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;5 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;11 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;15 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;16.1 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;20 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;20 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;40 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;50 µM
+Oc1ccc(/C=C/c2cc(O)cc(O)c2)cc1;1,3-Benzenediol, 5-[(1E)-2-(4-hydroxyphenyl)ethenyl]-;501-36-0;IC50;60 µM
+O=C(O)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-;149-91-7;IC50;100 - 200 µM
+O=C(O)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-;149-91-7;IC50;500 µM
+O=C(O)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-;149-91-7;IC50;> 1 × 103 µM
+Oc1cc(O)c2c(c1)O[C@H](c1ccc(O)c(O)c1)[C@@H](O)C2;2H-1-Benzopyran-3,5,7-triol, 2-(3,4-dihydroxyphenyl)-3,4-dihydro-, (2R,3S)-;154-23-4;IC50;< 5 µM
+Oc1cc(O)c2c(c1)O[C@H](c1ccc(O)c(O)c1)[C@@H](O)C2;2H-1-Benzopyran-3,5,7-triol, 2-(3,4-dihydroxyphenyl)-3,4-dihydro-, (2R,3S)-;154-23-4;IC50;> 10 µM
+O=c1c(O)c(-c2ccc(O)cc2)oc2cc(O)cc(O)c12;4H-1-Benzopyran-4-one, 3,5,7-trihydroxy-2-(4-hydroxyphenyl)-;520-18-3;IC50;< 5 µM
+O=c1cc(-c2ccc(O)c(O)c2)oc2cc(O)cc(O)c12;4H-1-Benzopyran-4-one, 2-(3,4-dihydroxyphenyl)-5,7-dihydroxy-;491-70-3;IC50;< 5 µM
+O=c1cc(-c2ccc(O)cc2)oc2cc(O)cc(O)c12;4H-1-Benzopyran-4-one, 5,7-dihydroxy-2-(4-hydroxyphenyl)-;520-36-5;IC50;< 5 µM
+O=C(/C=C/c1ccc(O)cc1)c1ccc(O)cc1O;2-Propen-1-one, 1-(2,4-dihydroxyphenyl)-3-(4-hydroxyphenyl)-, (2E)-;961-29-5;IC50;> 20 µM
+Cc1coc2c1C(=O)C(=O)c1c-2ccc2c1CCCC2(C)C;Phenanthro[1,2-b]furan-10,11-dione, 6,7,8,9-tetrahydro-1,6,6-trimethyl-;568-72-9;IC50;34 µM
+Cc1coc2c1C(=O)C(=O)c1c-2ccc2c1CCCC2(C)C;Phenanthro[1,2-b]furan-10,11-dione, 6,7,8,9-tetrahydro-1,6,6-trimethyl-;568-72-9;IC50;34 µM
+O=C(O[C@@H]1Cc2c(O)cc(O)cc2O[C@@H]1c1cc(O)c(O)c(O)c1)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-, (2R,3R)-3,4-dihydro-5,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)-2H-1-benzopyran-3-yl ester;989-51-5;IC50;10 µM
+O=C(O[C@@H]1Cc2c(O)cc(O)cc2O[C@@H]1c1cc(O)c(O)c(O)c1)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-, (2R,3R)-3,4-dihydro-5,7-dihydroxy-2-(3,4,5-trihydroxyphenyl)-2H-1-benzopyran-3-yl ester;989-51-5;IC50;80 µM
+COC(=O)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-, methyl ester;99-24-1;IC50;No activity
+C=C(C)[C@@H]1CC[C@]2(C(=O)O)CC[C@]3(C)[C@H](CC[C@@H]4[C@@]5(C)CC[C@H](O)C(C)(C)[C@@H]5CC[C@]43C)[C@@H]12;Lup-20(29)-en-28-oic acid, 3-hydroxy-, (3β)-;472-15-1;IC50;14.3 µM
+O=c1c(-c2ccc(O)cc2)coc2cc(O)cc(O)c12;4H-1-Benzopyran-4-one, 5,7-dihydroxy-3-(4-hydroxyphenyl)-;446-72-0;IC50;25 µM
+O=C1c2c(O)cc(O)cc2O[C@H](c2ccc(O)c(O)c2)[C@H]1O;4H-1-Benzopyran-4-one, 2-(3,4-dihydroxyphenyl)-2,3-dihydro-3,5,7-trihydroxy-, (2R,3R)-;480-18-2;IC50;40 µM
+COc1cc(O)c(CC=C(C)C)c(O)c1C(=O)/C=C/c1ccc(O)cc1;2-Propen-1-one, 1-[2,4-dihydroxy-6-methoxy-3-(3-methyl-2-buten-1-yl)phenyl]-3-(4-hydroxyphenyl)-, (2E)-;6754-58-1;IC50;3 mg/L
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;0.08 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;5 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;5 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;5 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;10 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;15 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;> 50 µM
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;7.7 mg/L
+COc1cc(/C=C/C(=O)CC(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,6-Heptadiene-3,5-dione, 1,7-bis(4-hydroxy-3-methoxyphenyl)-, (1E,6E)-;458-37-7;IC50;7.7 mg/L
+COc1cc(/C=C/c2ccc(O)cc2)cc(OC)c1;Phenol, 4-[(1E)-2-(3,5-dimethoxyphenyl)ethenyl]-;537-42-8;IC50;19.5 µM
+O=C(/C=C/c1ccc(O)c(O)c1)c1ccc(O)cc1O;2-Propen-1-one, 1-(2,4-dihydroxyphenyl)-3-(3,4-dihydroxyphenyl)-, (2E)-;487-52-5;IC50;10 µM
+O=C(/C=C/c1ccc(O)c(O)c1)c1ccc(O)cc1O;2-Propen-1-one, 1-(2,4-dihydroxyphenyl)-3-(3,4-dihydroxyphenyl)-, (2E)-;487-52-5;IC50;> 20 µM
+O=C(/C=C/c1ccc(O)cc1)c1ccccc1;2-Propen-1-one, 3-(4-hydroxyphenyl)-1-phenyl-, (2E)-;38239-55-3;IC50;> 20 µM
+COc1cc2ccc(=O)oc2cc1O;2H-1-Benzopyran-2-one, 7-hydroxy-6-methoxy-;92-61-5;IC50;50 mg/L
+COc1cc2ccc(=O)oc2cc1O;2H-1-Benzopyran-2-one, 7-hydroxy-6-methoxy-;92-61-5;IC50;50 mg/L
+COc1cc2ccc(=O)oc2cc1O;2H-1-Benzopyran-2-one, 7-hydroxy-6-methoxy-;92-61-5;IC50;50 mg/L
+COc1cc2ccc(=O)oc2cc1O;2H-1-Benzopyran-2-one, 7-hydroxy-6-methoxy-;92-61-5;IC50;50 mg/L
+COc1cc2ccc(=O)oc2cc1O;2H-1-Benzopyran-2-one, 7-hydroxy-6-methoxy-;92-61-5;IC50;50 mg/L
+O=C1c2c(O[C@@H]3O[C@H](CO)[C@@H](O)[C@H](O)[C@H]3O)cc(O)cc2OC1(O)Cc1ccc(O)cc1;3(2H)-Benzofuranone, 4-(β-D-glucopyranosyloxy)-2,6-dihydroxy-2-[(4-hydroxyphenyl)methyl]-;210050-28-5;IC50;> 10 µM
+Cc1cc(=O)oc2cc(O)ccc12;2H-1-Benzopyran-2-one, 7-hydroxy-4-methyl-;90-33-5;IC50;200 µM
+C[C@H]1[C@H](C)CC[C@]2(C(=O)O)CC[C@]3(C)C(=CC[C@@H]4[C@@]5(C)CC[C@H](O)C(C)(C)[C@@H]5CC[C@]43C)[C@H]12;Urs-12-en-28-oic acid, 3-hydroxy-, (3β)-;77-52-1;IC50;0.031 µM
+Oc1cc(O)c2c(c1)O[C@H](c1ccc(O)c(O)c1)[C@H](O)C2;2H-1-Benzopyran-3,5,7-triol, 2-(3,4-dihydroxyphenyl)-3,4-dihydro-, (2R,3R)-;490-46-0;IC50;> 10 µM
+C=CCc1ccc(O)c(OC)c1;Phenol, 2-methoxy-4-(2-propen-1-yl)-;97-53-0;IC50;1 × 103 µM
+O=C(/C=C/c1ccccc1O)/C=C/c1ccccc1O;1,4-Pentadien-3-one, 1,5-bis(2-hydroxyphenyl)-, (1E,4E)-;131359-24-5;IC50;4.2 µM
+O=C(/C=C/c1ccccc1O)/C=C/c1ccccc1O;1,4-Pentadien-3-one, 1,5-bis(2-hydroxyphenyl)-, (1E,4E)-;131359-24-5;IC50;4.2 µM
+O=C(/C=C/c1ccccc1O)/C=C/c1ccccc1O;1,4-Pentadien-3-one, 1,5-bis(2-hydroxyphenyl)-, (1E,4E)-;131359-24-5;IC50;4.2 µM
+O=C(/C=C/c1ccccc1O)/C=C/c1ccccc1O;1,4-Pentadien-3-one, 1,5-bis(2-hydroxyphenyl)-, (1E,4E)-;131359-24-5;IC50;4.5 µM
+C=C(C)[C@@H]1CC[C@]2(CO)CC[C@]3(C)[C@H](CC[C@@H]4[C@@]5(C)CC[C@H](O)C(C)(C)[C@@H]5CC[C@]43C)[C@@H]12;Lup-20(29)-ene-3,28-diol, (3β)-;473-98-3;IC50;8.8 µM
+COc1cc(C[C@H]2C(=O)OC[C@@H]2Cc2ccc(OC)c(OC)c2)ccc1O;2(3H)-Furanone, 4-[(3,4-dimethoxyphenyl)methyl]dihydro-3-[(4-hydroxy-3-methoxyphenyl)methyl]-, (3R,4R)-;7770-78-7;IC50;8 µM
+O=C(/C=C/c1ccccc1)c1ccccc1;2-Propen-1-one, 1,3-diphenyl-, (2E)-;614-47-1;IC50;> 20 µM
+COc1cccc(OC)c1-c1cc(=O)c2c(OC)c(OC)ccc2o1;4H-1-Benzopyran-4-one, 2-(2,6-dimethoxyphenyl)-5,6-dimethoxy-;14813-19-5;IC50;7.6 µM
+CCOC(=O)c1cc(O)c(O)c(O)c1;Benzoic acid, 3,4,5-trihydroxy-, ethyl ester;831-61-8;IC50;No activity
+CC1(C)CC[C@]2(C(=O)O)CC[C@]3(C)C(=CC[C@@H]4[C@@]5(C)CC[C@H](O)C(C)(C)[C@@H]5CC[C@]43C)[C@@H]2C1;Olean-12-en-28-oic acid, 3-hydroxy-, (3β)-;508-02-1;IC50;2.4 µM
+O=C(/C=C/C=C/c1ccc2c(c1)OCO2)N1CCCCC1;2,4-Pentadien-1-one, 5-(1,3-benzodioxol-5-yl)-1-(1-piperidinyl)-, (2E,4E)-;94-62-2;IC50;40 µM
+O=C(/C=C/C=C/c1ccc2c(c1)OCO2)N1CCCCC1;2,4-Pentadien-1-one, 5-(1,3-benzodioxol-5-yl)-1-(1-piperidinyl)-, (2E,4E)-;94-62-2;IC50;40 µM
+O=C(/C=C/C=C/c1ccc2c(c1)OCO2)N1CCCCC1;2,4-Pentadien-1-one, 5-(1,3-benzodioxol-5-yl)-1-(1-piperidinyl)-, (2E,4E)-;94-62-2;IC50;40 µM
+C=C[C@@](C)(/C=C/c1ccc(O)cc1)CCC=C(C)C;Phenol, 4-[(1E,3S)-3-ethenyl-3,7-dimethyl-1,6-octadien-1-yl]-;10309-37-2;IC50;6.9 µM
+CC(=O)N[C@@H](CS)C(=O)O;L-Cysteine, N-acetyl-;616-91-1;IC50;10 µM
+O=C1CC(c2ccc(O)cc2)Oc2cc(O)cc(O)c21;4H-1-Benzopyran-4-one, 2,3-dihydro-5,7-dihydroxy-2-(4-hydroxyphenyl)-;67604-48-2;IC50;8 µM
+COc1cc([C@H]2OC[C@H]3[C@@H]2CO[C@H]3c2ccc(O)c(OC)c2)ccc1O;Phenol, 4,4′-[(1R,3aR,4S,6aR)-tetrahydro-1H,3H-furo[3,4-c]furan-1,4-diyl]bis[2-methoxy-;24404-50-0;IC50;> 10 µM
+CC1(C)C[C@H](O)C[C@@]2(C)OC(=O)C=C12;2(4H)-Benzofuranone, 5,6,7,7a-tetrahydro-6-hydroxy-4,4,7a-trimethyl-, (6S,7aR)-;5989-02-6;IC50;> 10 µM
+CC1=CC(=O)CC(C)(C)[C@@]1(O)/C=C/[C@@H](C)O;2-Cyclohexen-1-one, 4-hydroxy-4-[(1E,3R)-3-hydroxy-1-buten-1-yl]-3,5,5-trimethyl-, (4S)-;23526-45-6;IC50;> 10 µM
+CC1=CC(=O)CC(C)(C)[C@@]1(O)/C=C/[C@@H](C)O;2-Cyclohexen-1-one, 4-hydroxy-4-[(1E,3R)-3-hydroxy-1-buten-1-yl]-3,5,5-trimethyl-, (4S)-;23526-45-6;IC50;12.3 µM
+COc1ccc(OC)c(/C=C/C(=O)/C=C/c2cc(OC)ccc2OC)c1;1,4-Pentadien-3-one, 1,5-bis(2,5-dimethoxyphenyl)-, (1E,4E)-;276681-03-9;IC50;6.5 µM
+COc1ccc(OC)c(/C=C/C(=O)/C=C/c2cc(OC)ccc2OC)c1;1,4-Pentadien-3-one, 1,5-bis(2,5-dimethoxyphenyl)-, (1E,4E)-;276681-03-9;IC50;6.4 µM
+COc1ccc(OC)c(/C=C/C(=O)/C=C/c2cc(OC)ccc2OC)c1;1,4-Pentadien-3-one, 1,5-bis(2,5-dimethoxyphenyl)-, (1E,4E)-;276681-03-9;IC50;6.5 µM
+COc1cc(/C=C/C(=O)/C=C/c2cc(OC)c(OC)c(OC)c2)cc(OC)c1OC;1,4-Pentadien-3-one, 1,5-bis(3,4,5-trimethoxyphenyl)-, (1E,4E)-;209051-29-6;IC50;7.9 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;4.2 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;4.4 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;4.4 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;4.4 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;4.5 µM
+COc1cc(/C=C2\CCC/C(=C\c3ccc(O)c(OC)c3)C2=O)ccc1O;Cyclohexanone, 2,6-bis[(4-hydroxy-3-methoxyphenyl)methylene]-, (2E,6E)-;214558-93-7;IC50;10 µM
+COc1ccc(OC)c(/C=C2\CCC/C(=C\c3cc(OC)ccc3OC)C2=O)c1;Cyclohexanone, 2,6-bis[(2,5-dimethoxyphenyl)methylene]-, (2E,6E)-;1169991-42-7;IC50;> 200 µM
+COc1cc(/C=C/C(=O)/C=C/c2ccc(O)c(OC)c2)ccc1O;1,4-Pentadien-3-one, 1,5-bis(4-hydroxy-3-methoxyphenyl)-, (1E,4E)-;131359-25-6;IC50;9.6 µM
+C=C(C)[C@@H]1CC[C@]2(C(=O)O)CC[C@]3(C)[C@H](CC[C@@H]4[C@@]5(C)C[C@@H](O)[C@H](O)C(C)(C)[C@@H]5CC[C@]43C)[C@@H]12;Lup-20(29)-en-28-oic acid, 2,3-dihydroxy-, (2α,3β)-;19533-92-7;IC50;8.7 µM
+O=c1c2ccccc2nc2n1CCc1c-2[nH]c2ccccc12;Indolo[2′,3′:3,4]pyrido[2,1-b]quinazolin-5(7H)-one, 8,13-dihydro-;84-26-4;IC50;1.4 µM
+O=c1c2ccccc2nc2n1CCc1c-2[nH]c2ccccc12;Indolo[2′,3′:3,4]pyrido[2,1-b]quinazolin-5(7H)-one, 8,13-dihydro-;84-26-4;IC50;1.4 µM
