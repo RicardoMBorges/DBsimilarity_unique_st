@@ -34,6 +34,8 @@ import os
 import pandas as pd
 from pathlib import Path
 from PIL import Image
+import plotly.io as pio
+
 from rdkit import Chem
 from rdkit.Chem import Draw, Descriptors, rdMolDescriptors, Crippen, Lipinski, AllChem, rdMolTransforms
 import py3Dmol
@@ -41,6 +43,24 @@ from typing import Optional
 from rdkit.Chem.Scaffolds import MurckoScaffold
 from rdkit.Chem import rdFMCS
 from rdkit.Chem.Draw import MolsToGridImage
+
+import numpy as np
+import plotly.express as px
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+from sklearn.manifold import TSNE
+
+# Mordred (2D/3D descriptors)
+try:
+    from mordred import Calculator, descriptors
+    MORDRED_AVAILABLE = True
+except Exception as e:
+    import sys, traceback
+    MORDRED_AVAILABLE = False
+    print("==== Mordred import failed in DBsimilarity-unique ====")
+    print("Python executable:", sys.executable)
+    traceback.print_exc()
+
 
 
 
@@ -133,6 +153,7 @@ def suggest_method(mol, similarity_threshold, db_file, fp_kind: str):
             st.warning("⚠️ Please upload a database CSV file in the sidebar.")
             return
 
+        reset_uploaded_file(db_file)
         database_df = pd.read_csv(db_file, sep=";")
         smiles_col = get_smiles_column(database_df)
         if smiles_col is None:
@@ -216,6 +237,15 @@ elif uploaded_file is not None:
         else:
             #st.image(Draw.MolToImage(mol, size=(250, 250)), caption="Structure from Image")
             source = "Image"
+
+def reset_uploaded_file(f):
+    """Reset file pointer for a Streamlit UploadedFile so it can be read again."""
+    try:
+        f.seek(0)
+    except Exception:
+        pass
+    return f
+
 
 def calculate_descriptors(mol):
     try:
@@ -478,25 +508,61 @@ def generate_similarity_network(mol, db_df, threshold, hover_col=None, fp_kind="
         edge_y.extend([y0, y1, None])
 
     node_x, node_y, node_text = [], [], []
+    # Separate DB nodes and Query node
+    db_x, db_y, db_text = [], [], []
+    q_x, q_y, q_text = [], [], []
+
     for node in G.nodes():
         x, y = pos[node]
-        node_x.append(x)
-        node_y.append(y)
         if node == "Query":
-            node_text.append("Query molecule")
+            q_x.append(x)
+            q_y.append(y)
+            q_text.append("Query molecule")
         else:
-            node_text.append(node_data.get(node, node))
+            db_x.append(x)
+            db_y.append(y)
+            db_text.append(node_data.get(node, node))
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=edge_x, y=edge_y, mode="lines", line=dict(width=1, color="gray"), hoverinfo="none"))
+
+    # Edges
     fig.add_trace(go.Scatter(
-        x=node_x, y=node_y,
+        x=edge_x,
+        y=edge_y,
+        mode="lines",
+        line=dict(width=1, color="gray"),
+        hoverinfo="none"
+    ))
+
+    # DB nodes (skyblue)
+    fig.add_trace(go.Scatter(
+        x=db_x,
+        y=db_y,
         mode="markers+text",
-        text=node_text,
+        name="Database molecules",
+        text=db_text,
         hoverinfo="text",
         textposition="top center",
-        marker=dict(size=20, color="skyblue")
+        marker=dict(size=18, color="skyblue")
     ))
+
+    # Query node (highlighted red star)
+    fig.add_trace(go.Scatter(
+        x=q_x,
+        y=q_y,
+        mode="markers+text",
+        name="Query",
+        text=q_text,
+        hoverinfo="text",
+        textposition="bottom center",
+        marker=dict(
+            size=26,
+            #symbol="star",
+            color="red",
+            line=dict(width=1, color="black")
+        )
+    ))
+
 
     fig.update_layout(
         title="Similarity Network (Filtered by Threshold)",
@@ -584,10 +650,26 @@ def draw_mcs_panel(query_mol: Chem.Mol, db_mol: Chem.Mol, mcs_smarts: str, legen
     except Exception:
         return None
 
+def sanitize_matrix_for_modeling(df_vals: pd.DataFrame) -> pd.DataFrame:
+    """
+    Keep numeric, finite values only and drop constant-variance columns.
+    This is a lightweight version of what you already use in DBsimilarity.
+    """
+    X = df_vals.select_dtypes(include=[np.number]).copy()
+    if X.empty:
+        return X
+    # Replace inf with NaN, then fill with 0.0
+    X = X.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    # Drop constant columns
+    variances = X.var(axis=0)
+    X = X.loc[:, variances > 0.0]
+    return X
+
 
 # === Call the function ===
 if mol and db_file is not None:
     try:
+        reset_uploaded_file(db_file)
         db_df = pd.read_csv(db_file, sep=";", on_bad_lines="skip")
         smiles_col = get_smiles_column(db_df)
 
@@ -599,7 +681,7 @@ if mol and db_file is not None:
             with col_thr:
                 similarity_threshold = st.slider(
                     "Select similarity threshold",
-                    min_value=0.0, max_value=1.0, value=0.7, step=0.01
+                    min_value=0.0, max_value=1.0, value=0.9, step=0.01
                 )
             with col_fp:
                 fp_kind = st.selectbox(
@@ -618,6 +700,8 @@ if mol and db_file is not None:
                     db_df.columns.tolist(),
                     index=0
                 )
+                st.session_state["hover_col_selected"] = hover_col
+
                 generate_similarity_network(
                     mol,
                     db_df.rename(columns={smiles_col: "SMILES"}),  # network expects "SMILES"
@@ -704,3 +788,413 @@ if mol and db_file is not None:
 
     except Exception as e:
         st.error(f"❌ Error reading database: {e}")
+
+#################
+# ======================================================================
+# 3D / 2D Mordred descriptors + PCA / t-SNE on the uploaded database
+# ======================================================================
+with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
+    st.markdown(
+        """
+        This section computes **Mordred descriptors** (2D and optional 3D) for the
+        molecules in your uploaded CSV database (`db_file`), then runs:
+        
+        - **PCA** (2D scores plot)  
+        - **t-SNE** (2D embedding, with optional cluster coloring later if you want)
+        
+        ⚠️ This can be computationally heavy — use the *Max molecules* limit below
+        to keep things responsive.
+        """
+    )
+
+    if not MORDRED_AVAILABLE:
+        st.warning(
+            "Mordred is not available in this environment. "
+            "Install `mordred` and redeploy to enable this section."
+        )
+    else:
+        if db_file is None:
+            st.info("Upload a CSV database file in the sidebar to enable this section.")
+        else:
+            try:
+                reset_uploaded_file(db_file)
+                db_desc_df = pd.read_csv(db_file, sep=";", on_bad_lines="skip")
+            except Exception as e:
+                st.error(f"Could not read database file for descriptors: {e}")
+                db_desc_df = pd.DataFrame()
+
+            if db_desc_df.empty:
+                st.info("Database appears empty or could not be parsed.")
+            else:
+                smiles_col = get_smiles_column(db_desc_df)
+                if smiles_col is None:
+                    st.error(
+                        "Your database must contain a SMILES-like column "
+                        "(e.g., SMILES/canonical_smiles/isomeric_smiles)."
+                    )
+                else:
+                    # Get the column selected in the Similarity Network (if any)
+                    hover_col_sel = st.session_state.get("hover_col_selected", None)
+                    if hover_col_sel and hover_col_sel not in db_desc_df.columns:
+                        hover_col_sel = None
+
+                    # --- Controls for this analysis ---
+                    c1, c2, c3 = st.columns(3)
+
+                    c1, c2, c3 = st.columns(3)
+                    with c1:
+                        max_mols = st.number_input(
+                            "Max molecules to process",
+                            min_value=10, max_value=2000, value=300, step=10,
+                            help="For performance. Molecules are truncated to the first N rows."
+                        )
+                    with c2:
+                        use_3d_desc = st.checkbox(
+                            "Use 3D descriptors (generate 3D conformers)",
+                            value=True,
+                            help="If checked, RDKit will generate 3D conformers before computing Mordred descriptors."
+                        )
+                    with c3:
+                        tsne_perp = st.slider(
+                            "t-SNE perplexity",
+                            min_value=5, max_value=50, value=20, step=1,
+                            help="Roughly, the effective number of neighbors used by t-SNE."
+                        )
+
+                    tsne_seed = st.number_input(
+                        "t-SNE random_state (for reproducibility)",
+                        min_value=0, max_value=9999, value=0, step=1
+                    )
+
+                    # Prepare SMILES list
+                    work_df = (
+                        db_desc_df
+                        .dropna(subset=[smiles_col])
+                        .drop_duplicates(subset=[smiles_col])
+                        .head(int(max_mols))
+                        .copy()
+                    )
+                    smiles_list = work_df[smiles_col].astype(str).tolist()
+
+                    st.caption(f"Using up to {len(smiles_list)} database molecules for descriptor calculation.")
+
+                    # --- Build molecules (with optional 3D), including the query ---
+                    mols = []
+                    meta = []  # track which row is Query vs DB
+                    failed = 0
+
+                    # 0) Add query molecule first (if available)
+                    if mol is not None:
+                        # Define hover text for the query
+                        if hover_col_sel:
+                            query_hover = f"Query (no {hover_col_sel} in DB)"
+                        else:
+                            query_hover = "Query molecule"
+
+                        try:
+                            q_m = mol
+                            if use_3d_desc:
+                                q3d = Chem.AddHs(q_m)
+                                status = AllChem.EmbedMolecule(q3d, randomSeed=0xF00D)
+                                if status == 0:
+                                    AllChem.UFFOptimizeMolecule(q3d)
+                                    q_m = q3d
+                            mols.append(q_m)
+                            meta.append({"role": "Query", "label": "Query", "hover": query_hover})
+                        except Exception:
+                            # if 3D fails, still keep 2D version
+                            mols.append(mol)
+                            meta.append({"role": "Query", "label": "Query", "hover": query_hover})
+
+
+                    # 1) Add DB molecules
+                    # 1) Add DB molecules
+                    for idx, s in zip(work_df.index, smiles_list):
+                        m = Chem.MolFromSmiles(s)
+                        if m is None:
+                            failed += 1
+                            continue
+                        try:
+                            if use_3d_desc:
+                                m3d = Chem.AddHs(m)
+                                status = AllChem.EmbedMolecule(m3d, randomSeed=0xF00D)
+                                if status == 0:
+                                    AllChem.UFFOptimizeMolecule(m3d)
+                                    m = m3d
+                            mols.append(m)
+
+                            # Choose a meaningful label if possible
+                            if "Name" in work_df.columns:
+                                label = str(work_df.loc[idx, "Name"])
+                            elif "ID" in work_df.columns:
+                                label = str(work_df.loc[idx, "ID"])
+                            else:
+                                label = f"DB_{idx}"
+
+                            # Hover text uses the chosen column if available
+                            if hover_col_sel:
+                                hover_val = str(work_df.loc[idx, hover_col_sel])
+                            else:
+                                hover_val = label
+
+                            meta.append({"role": "DB", "label": label, "hover": hover_val})
+                        except Exception:
+                            failed += 1
+                            continue
+
+
+                    if not mols:
+                        st.error("No valid molecules could be generated from SMILES.")
+                    else:
+                        if failed:
+                            st.warning(f"{failed} SMILES could not be parsed and were skipped.")
+
+                        # --- Mordred descriptors ---
+                        with st.spinner("Calculating Mordred descriptors (may take a while)…"):
+                            try:
+                                calc = Calculator(descriptors, ignore_3D=not use_3d_desc)
+                                df_desc = calc.pandas(mols)
+                            except Exception as e:
+                                st.error(f"Mordred failed: {e}")
+                                df_desc = pd.DataFrame()
+                        meta_df = pd.DataFrame(meta)
+
+                        if df_desc.empty:
+                            st.info("Descriptor table is empty. Skipping PCA / t-SNE.")
+                        else:
+                            # Clean numeric matrix
+                            df_vals_raw = df_desc.select_dtypes(include=[np.number])
+                            X_df = sanitize_matrix_for_modeling(df_vals_raw)
+
+                            if X_df.empty or X_df.shape[0] < 2:
+                                st.info("Not enough data for PCA/t-SNE after cleaning.")
+                            else:
+                                # --- Align meta_df and X_df row counts ---
+                                n_meta = len(meta_df)
+                                n_X = len(X_df)
+
+                                if n_meta > n_X:
+                                    # More metadata entries than descriptor rows -> trim meta
+                                    meta_df = meta_df.iloc[:n_X].reset_index(drop=True)
+                                elif n_meta < n_X:
+                                    # More descriptor rows than metadata entries -> trim X_df
+                                    X_df = X_df.iloc[:n_meta, :].reset_index(drop=True)
+
+                                # Now they MUST be equal
+                                n_samples, n_features = X_df.shape
+                                st.caption(
+                                    f"Descriptors after cleaning: {n_samples} samples × {n_features} features."
+                                )
+
+                                # Optional: cap number of features by variance
+                                max_features = 1000
+                                if n_features > max_features:
+                                    topk = X_df.var().sort_values(ascending=False).index[:max_features]
+                                    X_df = X_df[topk]
+                                    n_samples, n_features = X_df.shape
+
+                                # Standardization (zero mean, unit variance)
+                                try:
+                                    X = StandardScaler(with_mean=True, with_std=True).fit_transform(X_df.values)
+                                except Exception as e:
+                                    st.warning(f"Standardization failed ({e}); using raw values.")
+                                    X = X_df.values
+
+
+                                # Standardization (zero mean, unit variance)
+                                try:
+                                    X = StandardScaler(with_mean=True, with_std=True).fit_transform(X_df.values)
+                                except Exception as e:
+                                    st.warning(f"Standardization failed ({e}); using raw values.")
+                                    X = X_df.values
+
+                                # IDs for hover (try InChIKey if present, else row index)
+                                if "InChIKey" in db_desc_df.columns:
+                                    ids = (
+                                        db_desc_df.dropna(subset=[smiles_col])
+                                        .drop_duplicates(subset=[smiles_col])
+                                        .head(len(X_df))
+                                        ["InChIKey"]
+                                        .astype(str)
+                                        .tolist()
+                                    )
+                                else:
+                                    ids = [f"mol_{i+1}" for i in range(len(X_df))]
+
+                                # --- PCA ---
+                                st.markdown("### PCA (2D)")
+                                try:
+                                    ncomp = int(min(2, n_features, n_samples))
+                                    if ncomp >= 1:
+                                        pca = PCA(n_components=ncomp, svd_solver="auto")
+                                        scores = pca.fit_transform(X)
+
+                                        pc1 = scores[:, 0]
+                                        pc2 = scores[:, 1] if ncomp > 1 else np.zeros_like(pc1)
+
+                                        coords_pca = pd.DataFrame({
+                                            "PC1": pc1,
+                                            "PC2": pc2,
+                                            "role": meta_df["role"],
+                                            "label": meta_df["label"],
+                                            "hover": meta_df["hover"],
+                                        })
+
+
+                                        fig_pca = go.Figure()
+
+                                        # DB molecules
+                                        db_mask = coords_pca["role"] == "DB"
+                                        fig_pca.add_trace(go.Scatter(
+                                            x=coords_pca.loc[db_mask, "PC1"],
+                                            y=coords_pca.loc[db_mask, "PC2"],
+                                            mode="markers",
+                                            name="Database",
+                                            hovertext=coords_pca.loc[db_mask, "hover"],
+                                            hoverinfo="text",
+                                            marker=dict(size=8, opacity=0.9)
+                                        ))
+
+
+                                        # Query molecule (highlighted)
+                                        q_mask = coords_pca["role"] == "Query"
+                                        if q_mask.any():
+                                            fig_pca.add_trace(go.Scatter(
+                                                x=coords_pca.loc[q_mask, "PC1"],
+                                                y=coords_pca.loc[q_mask, "PC2"],
+                                                mode="markers+text",
+                                                name="Query",
+                                                text=["Query"],
+                                                textposition="top center",
+                                                hovertext=coords_pca.loc[q_mask, "label"],
+                                                hoverinfo="text",
+                                                marker=dict(size=14, symbol="star", line=dict(width=1),color="red")
+                                            ))
+
+                                        fig_pca.update_layout(
+                                            title="PCA on Mordred descriptors",
+                                            xaxis_title="PC1",
+                                            yaxis_title=("PC2" if ncomp > 1 else "PC2 (zero)"),
+                                            legend_title="Molecule type",
+                                            margin=dict(l=20, r=20, t=40, b=20),
+                                        )
+
+                                        st.plotly_chart(fig_pca, use_container_width=True)
+
+                                        # Downloads
+                                        pca_df = coords_pca[["PC1", "PC2", "role", "label"]]
+                                        st.download_button(
+                                            "Download PCA scores (CSV)",
+                                            data=pca_df.to_csv(index=False).encode("utf-8"),
+                                            file_name="pca_scores_mordred.csv",
+                                            mime="text/csv"
+                                        )
+                                        st.download_button(
+                                            "📥 Download PCA plot (HTML)",
+                                            data=pio.to_html(fig_pca, include_plotlyjs='cdn', full_html=True).encode("utf-8"),
+                                            file_name="pca_mordred.html",
+                                            mime="text/html"
+                                        )
+                                    else:
+                                        st.info("PCA skipped: fewer than 1 usable component.")
+                                except Exception as e:
+                                    st.warning(f"PCA failed: {e}")
+
+
+                                # --- t-SNE ---
+                                st.markdown("### t-SNE (2D)")
+                                try:
+                                    if n_samples < 3:
+                                        st.info("t-SNE skipped: need at least 3 samples.")
+                                    else:
+                                        max_perp = max(
+                                            5,
+                                            min(int(tsne_perp), n_samples - 1, max(5, (n_samples - 1) // 3))
+                                        )
+                                        tsne = TSNE(
+                                            n_components=2,
+                                            learning_rate="auto",
+                                            random_state=int(tsne_seed),
+                                            init="random",
+                                            perplexity=max_perp,
+                                        )
+                                        ts = tsne.fit_transform(X)
+
+                                        coords_ts = pd.DataFrame({
+                                            "tSNE1": ts[:, 0],
+                                            "tSNE2": ts[:, 1],
+                                            "role": meta_df["role"],
+                                            "label": meta_df["label"],
+                                            "hover": meta_df["hover"],
+                                        })
+
+
+                                        fig_ts = go.Figure()
+
+                                        # DB molecules
+                                        db_mask = coords_ts["role"] == "DB"
+                                        if q_mask.any():
+                                            fig_ts.add_trace(go.Scatter(
+                                                x=coords_ts.loc[q_mask, "tSNE1"],
+                                                y=coords_ts.loc[q_mask, "tSNE2"],
+                                                mode="markers+text",
+                                                name="Query",
+                                                text=["Query"],
+                                                textposition="top center",
+                                                hovertext=coords_ts.loc[q_mask, "hover"],
+                                                hoverinfo="text",
+                                                marker=dict(size=14, symbol="star", line=dict(width=1), color="red")
+                                            ))
+
+
+
+                                        # Query molecule (highlighted)
+                                        q_mask = coords_ts["role"] == "Query"
+                                        if q_mask.any():
+                                            fig_ts.add_trace(go.Scatter(
+                                                x=coords_ts.loc[db_mask, "tSNE1"],
+                                                y=coords_ts.loc[db_mask, "tSNE2"],
+                                                mode="markers",
+                                                name="Database",
+                                                hovertext=coords_ts.loc[db_mask, "hover"],
+                                                hoverinfo="text",
+                                                marker=dict(size=8, opacity=0.9)
+                                            ))
+
+
+                                        fig_ts.update_layout(
+                                            title=f"t-SNE on Mordred descriptors (perplexity={max_perp})",
+                                            xaxis_title="tSNE-1",
+                                            yaxis_title="tSNE-2",
+                                            legend_title="Molecule type",
+                                            margin=dict(l=20, r=20, t=40, b=20),
+                                        )
+
+                                        st.plotly_chart(fig_ts, use_container_width=True)
+
+                                        tsne_df = coords_ts[["tSNE1", "tSNE2", "role", "label"]]
+                                        st.download_button(
+                                            "Download t-SNE scores (CSV)",
+                                            data=tsne_df.to_csv(index=False).encode("utf-8"),
+                                            file_name="tsne_scores_mordred.csv",
+                                            mime="text/csv"
+                                        )
+                                        st.download_button(
+                                            "📥 Download t-SNE plot (HTML)",
+                                            data=pio.to_html(fig_ts, include_plotlyjs='cdn', full_html=True).encode("utf-8"),
+                                            file_name="tsne_mordred.html",
+                                            mime="text/html"
+                                        )
+                                except Exception as e:
+                                    st.warning(f"t-SNE failed: {e}")
+
+
+                                # --- Optionally export full descriptor table ---
+                                with st.expander("Raw Mordred descriptor table (download)", expanded=False):
+                                    st.dataframe(df_desc.head(10), use_container_width=True)
+                                    st.download_button(
+                                        "📥 Download Mordred descriptors (CSV)",
+                                        data=df_desc.to_csv(index=False).encode("utf-8"),
+                                        file_name="mordred_descriptors_full.csv",
+                                        mime="text/csv"
+                                    )
