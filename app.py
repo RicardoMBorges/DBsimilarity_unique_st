@@ -35,6 +35,7 @@ import pandas as pd
 from pathlib import Path
 from PIL import Image
 import plotly.io as pio
+import io
 
 from rdkit import Chem
 from rdkit.Chem import Draw, Descriptors, rdMolDescriptors, Crippen, Lipinski, AllChem, rdMolTransforms
@@ -147,6 +148,16 @@ def get_smiles_column(df: pd.DataFrame) -> Optional[str]:
 
     return None
 
+def read_csv_safe(uploaded_file, sep=";"):
+    raw = uploaded_file.getvalue()  # bytes, stable
+    for enc in ["utf-8", "utf-8-sig", "cp1252", "latin1", "ISO-8859-1"]:
+        try:
+            return pd.read_csv(io.BytesIO(raw), sep=sep, encoding=enc, engine="python")
+        except UnicodeDecodeError:
+            continue
+    # last-resort: replace invalid chars
+    return pd.read_csv(io.BytesIO(raw), sep=sep, encoding="latin1", engine="python", encoding_errors="replace")
+
 def suggest_method(mol, similarity_threshold, db_file, fp_kind: str):
     try:
         if db_file is None:
@@ -154,7 +165,7 @@ def suggest_method(mol, similarity_threshold, db_file, fp_kind: str):
             return
 
         reset_uploaded_file(db_file)
-        database_df = pd.read_csv(db_file, sep=";")
+        database_df = read_csv_safe(db_file, sep=";")
         smiles_col = get_smiles_column(database_df)
         if smiles_col is None:
             st.error("❌ Your database must include a SMILES-like column (e.g., SMILES/canonical_smiles).")
@@ -669,8 +680,8 @@ def sanitize_matrix_for_modeling(df_vals: pd.DataFrame) -> pd.DataFrame:
 # === Call the function ===
 if mol and db_file is not None:
     try:
-        reset_uploaded_file(db_file)
-        db_df = pd.read_csv(db_file, sep=";", on_bad_lines="skip")
+        #reset_uploaded_file(db_file)
+        db_df = read_csv_safe(db_file, sep=";")
         smiles_col = get_smiles_column(db_df)
 
         if smiles_col:
@@ -818,7 +829,7 @@ with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
         else:
             try:
                 reset_uploaded_file(db_file)
-                db_desc_df = pd.read_csv(db_file, sep=";", on_bad_lines="skip")
+                db_desc_df = read_csv_safe(db_file, sep=";")
             except Exception as e:
                 st.error(f"Could not read database file for descriptors: {e}")
                 db_desc_df = pd.DataFrame()
