@@ -1,0 +1,13 @@
+streamlit
+rdkit==2025.3.5
+pandas
+numpy
+plotly
+networkx
+scikit-learn
+scipy
+matplotlib
+mordred
+pillow
+wordcloud
+xlsxwriter
