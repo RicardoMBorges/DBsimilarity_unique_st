@@ -11,3 +11,4 @@ mordred
 pillow
 wordcloud
 xlsxwriter
+py3Dmol
