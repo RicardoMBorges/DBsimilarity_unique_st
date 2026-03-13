@@ -1,7 +1,7 @@
 streamlit
 rdkit==2025.3.5
 pandas
-numpy
+numpy<2.0
 plotly
 networkx
 scikit-learn
