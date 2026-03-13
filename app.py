@@ -933,10 +933,10 @@ with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
     )
 
     if not MORDRED_AVAILABLE:
-        st.warning(
-            "Mordred is not available in this environment. "
-            "Install `mordred` and redeploy to enable this section."
-        )
+        msg = "Mordred is not available in this environment."
+        if MORDRED_IMPORT_ERROR:
+            msg += f" Import error: {MORDRED_IMPORT_ERROR}"
+        st.warning(msg)
     else:
         if db_file is None:
             st.info("Upload a CSV database file in the sidebar to enable this section.")
@@ -1323,6 +1323,7 @@ with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
                                         file_name="mordred_descriptors_full.csv",
                                         mime="text/csv"
                                     )
+
 
 
 
