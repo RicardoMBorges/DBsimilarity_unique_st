@@ -342,7 +342,6 @@ def get_fingerprint(mol: Chem.Mol, kind: str):
     except Exception:
         return None
 
-from rdkit import DataStructs
 
 def compute_similarity_table(
     query_mol: Chem.Mol,
@@ -676,6 +675,39 @@ def sanitize_matrix_for_modeling(df_vals: pd.DataFrame) -> pd.DataFrame:
     X = X.loc[:, variances > 0.0]
     return X
 
+def get_similar_compounds_df(mol, db_df, smiles_col, threshold, fp_kind="Morgan (ECFP4)"):
+    fp_query = get_fingerprint(mol, fp_kind)
+    if fp_query is None:
+        return pd.DataFrame()
+
+    rows = []
+    for i, row in db_df.iterrows():
+        try:
+            s = row.get(smiles_col, None)
+            if pd.isna(s) or not isinstance(s, str):
+                continue
+
+            db_mol = Chem.MolFromSmiles(s)
+            if db_mol is None:
+                continue
+
+            fp_db = get_fingerprint(db_mol, fp_kind)
+            if fp_db is None:
+                continue
+
+            sim = DataStructs.TanimotoSimilarity(fp_query, fp_db)
+            if sim >= threshold:
+                row_dict = row.to_dict()
+                row_dict["Similarity"] = round(float(sim), 4)
+                row_dict["Row_Index"] = i
+                rows.append(row_dict)
+        except Exception:
+            continue
+
+    if not rows:
+        return pd.DataFrame()
+
+    return pd.DataFrame(rows).sort_values("Similarity", ascending=False).reset_index(drop=True)
 
 # === Call the function ===
 if mol and db_file is not None:
@@ -709,17 +741,101 @@ if mol and db_file is not None:
                 hover_col = st.selectbox(
                     "Choose column to display on nodes",
                     db_df.columns.tolist(),
-                    index=0
+                    index=0,
+                    key="hover_col_similarity_network"
                 )
                 st.session_state["hover_col_selected"] = hover_col
 
                 generate_similarity_network(
                     mol,
-                    db_df.rename(columns={smiles_col: "SMILES"}),  # network expects "SMILES"
+                    db_df.rename(columns={smiles_col: "SMILES"}),
                     similarity_threshold,
                     hover_col,
                     fp_kind=fp_kind
                 )
+
+                similar_df = get_similar_compounds_df(
+                    mol=mol,
+                    db_df=db_df,
+                    smiles_col=smiles_col,
+                    threshold=similarity_threshold,
+                    fp_kind=fp_kind
+                )
+
+                st.markdown("### Wordcloud from similar compounds")
+
+                if similar_df.empty:
+                    st.info("No similar compounds available above the selected threshold.")
+                else:
+                    text_candidate_cols = [
+                        c for c in similar_df.columns
+                        if similar_df[c].dtype == "object" and c != smiles_col
+                    ]
+
+                    if text_candidate_cols:
+                        wordcloud_col = st.selectbox(
+                            "Choose column to build the wordcloud",
+                            text_candidate_cols,
+                            index=0,
+                            key="wordcloud_column_similarity_network"
+                        )
+
+                        st.caption(f"{len(similar_df)} compounds matched the threshold.")
+
+                        text_data = (
+                            similar_df[wordcloud_col]
+                            .dropna()
+                            .astype(str)
+                            .str.strip()
+                        )
+                        text_data = text_data[text_data != ""]
+
+                        if text_data.empty:
+                            st.warning("Selected column has no text values among the similar compounds.")
+                        else:
+                            try:
+                                from wordcloud import WordCloud
+                                import matplotlib.pyplot as plt
+
+                                wc_text = " ".join(text_data.tolist())
+                                wc = WordCloud(
+                                    width=1200,
+                                    height=500,
+                                    background_color="white"
+                                ).generate(wc_text)
+
+                                fig_wc, ax_wc = plt.subplots(figsize=(12, 5))
+                                ax_wc.imshow(wc, interpolation="bilinear")
+                                ax_wc.axis("off")
+                                st.pyplot(fig_wc)
+
+                            except ModuleNotFoundError:
+                                st.warning("Package 'wordcloud' is not installed. Showing term frequencies instead.")
+
+                                term_counts = (
+                                    text_data.str.split(r"[;,/\|\s]+")
+                                    .explode()
+                                    .dropna()
+                                    .astype(str)
+                                    .str.strip()
+                                )
+                                term_counts = term_counts[term_counts != ""]
+                                freq_df = term_counts.value_counts().reset_index()
+                                freq_df.columns = ["Term", "Count"]
+
+                                if not freq_df.empty:
+                                    fig_bar = px.bar(freq_df.head(20), x="Term", y="Count", title="Top term frequencies")
+                                    st.plotly_chart(fig_bar, use_container_width=True)
+                                else:
+                                    st.info("No terms available to plot.")
+
+                            except Exception as e:
+                                st.warning(f"Could not render wordcloud: {e}")
+
+                        with st.expander("Preview similar compounds used for wordcloud", expanded=False):
+                            st.dataframe(similar_df.head(30), use_container_width=True)
+                    else:
+                        st.info("No text-like columns available for wordcloud generation.")
 
             # --- Export (Morgan & Bemis–Murcko) ---
             with st.expander("Export similarities (Morgan & Bemis–Murcko + common scaffold)", expanded=False):
@@ -1209,3 +1325,5 @@ with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
                                         file_name="mordred_descriptors_full.csv",
                                         mime="text/csv"
                                     )
+
+
