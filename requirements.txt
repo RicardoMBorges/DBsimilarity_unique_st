@@ -10,5 +10,6 @@ matplotlib
 mordred
 pillow
 wordcloud
+matplotlib
 xlsxwriter
 py3Dmol
