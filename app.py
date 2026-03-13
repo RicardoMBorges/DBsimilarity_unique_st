@@ -55,12 +55,10 @@ from sklearn.manifold import TSNE
 try:
     from mordred import Calculator, descriptors
     MORDRED_AVAILABLE = True
+    MORDRED_IMPORT_ERROR = None
 except Exception as e:
-    import sys, traceback
     MORDRED_AVAILABLE = False
-    print("==== Mordred import failed in DBsimilarity-unique ====")
-    print("Python executable:", sys.executable)
-    traceback.print_exc()
+    MORDRED_IMPORT_ERROR = str(e)
 
 
 
@@ -1325,5 +1323,6 @@ with st.expander("3D descriptors + PCA / t-SNE on database", expanded=False):
                                         file_name="mordred_descriptors_full.csv",
                                         mime="text/csv"
                                     )
+
 
 
